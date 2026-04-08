@@ -1,51 +1,59 @@
-// Simple email notification service using a backend endpoint or EmailJS
-// For now, we'll use a simulated email system that logs to console
+// EmailJS Configuration
+import emailjs from '@emailjs/browser';
+
+// Initialize EmailJS
+emailjs.init('UQ0me3FOAkdgLLPJA');
+
+const SERVICE_ID = 'service_vgg8188';
+const TEMPLATE_ID = 'template_rjwg2lc';
 
 export const sendBookingConfirmation = async (bookingDetails, userEmail) => {
   try {
-    // Simulate sending email - in production, use EmailJS or backend API
     const emailData = {
-      to: userEmail,
-      subject: `Booking Confirmation - ${bookingDetails.eventName}`,
-      message: `
-        Dear ${bookingDetails.clientName},
-        
-        Your event has been confirmed!
-        
-        Event: ${bookingDetails.eventName}
-        Date: ${bookingDetails.date}
-        Time: ${bookingDetails.time}
-        Location: ${bookingDetails.venue}
-        Guests: ${bookingDetails.people}
-        Service: ${bookingDetails.service}
-        
-        Amount Paid: ₹1500
-        
-        Thank you for booking with Event Planner!
-        
-        Best regards,
-        Event Planner Team
-      `
+      to_email: userEmail,
+      to_name: bookingDetails.clientName || 'Client',
+      event_name: bookingDetails.eventName || 'Event',
+      event_date: bookingDetails.date || 'N/A',
+      event_time: bookingDetails.time || 'N/A',
+      event_venue: bookingDetails.venue || 'N/A',
+      event_guests: bookingDetails.people || 'N/A',
+      event_service: bookingDetails.service || 'N/A',
+      amount_paid: '₹1500'
     };
+
+    const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, emailData);
     
-    // In production, send via EmailJS:
-    // await emailjs.send('service_id', 'template_id', emailData);
-    
-    console.log("Email sent (simulated):", emailData);
-    
+    console.log('Email sent successfully:', result);
+
     // Store in localStorage for admin to see
     const notifications = JSON.parse(localStorage.getItem("notifications")) || [];
     notifications.push({
-      ...emailData,
+      to_email: userEmail,
+      subject: `Booking Confirmation - ${bookingDetails.eventName}`,
+      event_name: bookingDetails.eventName,
       timestamp: new Date().toISOString(),
-      sent: true
+      sent: true,
+      status: 'Success'
     });
     localStorage.setItem("notifications", JSON.stringify(notifications));
     
-    return { success: true };
+    return { success: true, message: 'Email sent successfully!' };
   } catch (error) {
     console.error("Failed to send email:", error);
-    return { success: false, error };
+    
+    // Store failed attempt
+    const notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+    notifications.push({
+      to_email: userEmail,
+      subject: `Booking Confirmation - ${bookingDetails.eventName}`,
+      timestamp: new Date().toISOString(),
+      sent: false,
+      status: 'Failed',
+      error: error.text || 'Unknown error'
+    });
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+    
+    return { success: false, error: error.message };
   }
 };
 
