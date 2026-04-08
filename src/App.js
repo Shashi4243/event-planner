@@ -9,6 +9,7 @@ import Login from "./Login";
 import VendorDashboard from "./VendorDashboard";
 import Footer from "./Footer";
 import Payment from "./Payment";
+import AdminPanel from "./AdminPanel";
 
 const staticVendors = [
   {
@@ -118,6 +119,7 @@ function App() {
         <Route path="/details/:id" element={<VendorDetails />} />
         <Route path="/summary" element={<EventSummary />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </Router>
   );

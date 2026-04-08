@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { sendBookingConfirmation } from "./emailService";
 
 function Payment() {
   const navigate = useNavigate();
@@ -7,6 +8,7 @@ function Payment() {
   const [paid, setPaid] = useState(false);
   const [lastEvent, setLastEvent] = useState(null);
   const [bookingId, setBookingId] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const ev = JSON.parse(localStorage.getItem("lastEvent"));
@@ -37,7 +39,23 @@ function Payment() {
         }
       }
 
-      setBookingId(`BK-${Math.floor(100000 + Math.random() * 900000)}`);
+      const id = `BK-${Math.floor(100000 + Math.random() * 900000)}`;
+      setBookingId(id);
+
+      // Send booking confirmation email
+      if (userEmail) {
+        const bookingData = {
+          eventName: lastEvent?.name || "Event",
+          clientName: lastEvent?.clientName || "Client",
+          date: lastEvent?.date || "N/A",
+          time: lastEvent?.time || "N/A",
+          venue: lastEvent?.location || "N/A",
+          people: lastEvent?.guests || "N/A",
+          service: lastEvent?.services?.[0] || "N/A"
+        };
+        sendBookingConfirmation(bookingData, userEmail);
+      }
+
       setProcessing(false);
       setPaid(true);
     }, 900);
@@ -121,6 +139,13 @@ function Payment() {
           <div className="p-8">
             <h4 className="text-lg font-semibold mb-4">Payment details</h4>
 
+            <input 
+              type="email"
+              className="w-full border rounded p-3 mt-1 mb-3" 
+              placeholder="Email for confirmation" 
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+            />
             <input className="w-full border rounded p-3 mt-1 mb-3" placeholder="Card number" />
             <div className="flex gap-3">
               <input className="flex-1 border rounded p-2" placeholder="MM/YY" />
@@ -136,7 +161,7 @@ function Payment() {
               <button
                 onClick={handlePay}
                 className={`px-6 py-3 rounded-lg text-white font-semibold ${processing ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
-                disabled={processing}
+                disabled={processing || !userEmail}
               >
                 {processing ? "Processing..." : "Pay Now"}
               </button>
