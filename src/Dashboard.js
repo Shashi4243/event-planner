@@ -38,6 +38,7 @@ function Dashboard() {
               {b.image && (
                 <img
                   src={b.image}
+                  alt={`${b.name} booking image`}
                   className="h-40 w-full object-cover rounded"
                 />
               )}

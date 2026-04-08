@@ -78,7 +78,7 @@ function VendorDetails() {
 
       <div className="bg-white p-6 shadow rounded w-[400px]">
 
-        <img src={vendor.image} className="h-52 w-full object-cover" />
+        <img src={vendor.image} alt={`${vendor.name} service`} className="h-52 w-full object-cover" />
 
         <h2 className="text-xl font-bold mt-2">{vendor.name}</h2>
 

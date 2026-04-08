@@ -132,7 +132,7 @@ function VendorDashboard() {
           <div key={i} className="bg-white p-4 rounded shadow">
 
             {v.image && (
-              <img src={v.image} className="h-40 w-full object-cover rounded" />
+              <img src={v.image} alt={`${v.name} service`} className="h-40 w-full object-cover rounded" />
             )}
 
             <h3 className="font-bold mt-2">{v.name}</h3>
