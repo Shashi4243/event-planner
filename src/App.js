@@ -94,7 +94,7 @@ function App() {
 
                   return (
                     <div key={i} className="bg-white shadow p-4 rounded hover:scale-105 transition">
-                      <img src={v.image} alt={`${v.name} image`} className="h-40 w-full object-cover" />
+                      <img src={v.image} alt={v.name} className="h-40 w-full object-cover" />
                       <h3 className="font-bold mt-2">{v.name}</h3>
                       <p>{v.service}</p>
                       <p>₹{v.price}</p>
